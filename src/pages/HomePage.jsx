@@ -1,18 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Phone, MessageCircle, MapPin, Clock, Eye, ExternalLink, Search } from 'lucide-react';
+import { 
+  Phone, MessageCircle, MapPin, Clock, ExternalLink, Navigation, 
+  CheckCircle2, ChevronRight, Eye, ShieldCheck, Share2 
+} from 'lucide-react';
 import { siteConfig } from '../siteConfig';
-import { defaultProducts, categories, faqList } from '../data/products';
+import { categories, faqList } from '../data/products';
+import { fetchProducts, parseImages } from '../services/productService';
+import ProductDetailModal from '../components/ProductDetailModal';
 
-// localStorage'dan ürünleri al, yoksa varsayılanları yükle
-function getProducts() {
-  try {
-    const saved = localStorage.getItem('ikinciel_products');
-    if (saved) return JSON.parse(saved);
-  } catch (e) { /* ignore */ }
-  return defaultProducts;
-}
-
-// Ziyaretçi sayacı
 function getVisitorCount() {
   try {
     let count = parseInt(localStorage.getItem('ikinciel_visitors') || '0', 10);
@@ -31,184 +26,321 @@ export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
   const [search, setSearch] = useState('');
-  const [visitorCount] = useState(getVisitorCount);
+  const [activeModalProduct, setActiveModalProduct] = useState(null);
 
   useEffect(() => {
-    setProducts(getProducts());
-    // Storage event dinle (admin panelinden ürün eklenince güncelle)
-    const onStorage = () => setProducts(getProducts());
+    fetchProducts().then(data => setProducts(data));
+    getVisitorCount();
+    const onStorage = () => fetchProducts().then(data => setProducts(data));
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   const filtered = products.filter(p => {
     const catMatch = selectedCategory === 'Tümü' || p.category === selectedCategory;
-    const searchMatch = !search || 
-      p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase());
+    const q = search.toLowerCase();
+    const searchMatch = !q || p.title.toLowerCase().includes(q) || (p.description && p.description.toLowerCase().includes(q));
     return catMatch && searchMatch;
   });
 
-  const waLink = (productTitle) => {
-    const msg = productTitle
-      ? `Merhaba, "${productTitle}" hakkında bilgi almak istiyorum.`
+  const waLink = (title) => {
+    const msg = title
+      ? `Merhaba Yusuf Bey, "${title}" hakkında bilgi almak istiyorum.`
       : siteConfig.whatsappDefaultMessage;
     return `https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(msg)}`;
   };
 
   return (
     <>
-      {/* Header */}
-      <header className="header">
-        <div className="container header-inner">
-          <a href="/" className="logo">
-            <div className="logo-icon">🏗️</div>
-            <div className="logo-text">
-              Kayseri İkinci El
-              <small>İnşaat Malzemeleri</small>
+      {/* Modern, Estetik Navbar */}
+      <header className="header-pro">
+        <div className="container header-pro-inner">
+          <a href="/" className="brand-logo-wrap">
+            <img src="/logo.svg" alt="Ulusoy İnşaat Logo" className="brand-logo-img" />
+            <div className="brand-logo-text">
+              <span className="brand-title">Ulusoy İnşaat</span>
+              <span className="brand-sub">Kayseri İkinci El • Yusuf Ulusoy</span>
             </div>
           </a>
-          <div className="header-btns">
-            <a href={`tel:${siteConfig.phoneRaw}`} className="btn btn-call btn-sm">
-              <Phone size={16} /> {siteConfig.phoneDisplay}
+
+          {/* Menü Linkleri */}
+          <nav className="header-nav-links">
+            <a href="#urunler" className="nav-link">Malzemeler</a>
+            <a href="#konum" className="nav-link">Konum & Depo</a>
+            <a href="#facebook" className="nav-link">Facebook</a>
+            <a href="#sss" className="nav-link">S.S.S.</a>
+          </nav>
+
+          <div className="header-pro-actions">
+            <a
+              href={siteConfig.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-btn-map"
+              title="Google Haritalar'da Aç"
+            >
+              <MapPin size={14} /> Haritada Göster
             </a>
-            <a href={waLink()} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp btn-sm">
-              <MessageCircle size={16} /> WhatsApp
+            <a href={`tel:${siteConfig.phoneRaw}`} className="nav-btn-call">
+              <Phone size={14} /> {siteConfig.phoneDisplay}
             </a>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero Vitrin */}
       <section className="hero">
         <div className="container">
           <div className="hero-content">
-            <div className="hero-badge">📍 Kayseri Eski Sanayi / Yeni Sanayi Bölgesi</div>
-            <h1>Kayseri <span>İkinci El İnşaat Malzemesi</span> Alım & Satım</h1>
+            <div className="hero-badge">
+              <span className="hero-badge-dot"></span>
+              Ulusoy İnşaat • Yusuf Ulusoy Güvencesiyle
+            </div>
+            <h1>Kayseri İkinci El İnşaat Malzemeleri & Ekipman Alım-Satımı</h1>
             <p>
-              Teleskopik direk, iskele, plywood, kereste ve kalıp malzemeleri. 
-              Uygun fiyata satış, değerinde nakit alım, yerinde teslim.
+              Teleskopik demir direk, kalıp altı iskele, plywood, inşaat kerestesi, sac panolar, harç makineleri, klima ve şantiye ekipmanları. 
+              Değerinde nakit alım, uygun fiyata satış ve yerinde teslimat.
             </p>
-            <div className="hero-btns">
-              <a href={`tel:${siteConfig.phoneRaw}`} className="btn btn-call btn-lg">
-                <Phone size={22} /> Hemen Ara: {siteConfig.phoneDisplay}
+
+            <div className="hero-actions">
+              <a
+                href={siteConfig.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-hero btn-hero-map"
+              >
+                <Navigation size={17} /> Haritada Göster (Ulusoy İnşaat)
               </a>
-              <a href={waLink()} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp btn-lg">
-                <MessageCircle size={22} /> WhatsApp ile Yaz
+              <a
+                href={`tel:${siteConfig.phoneRaw}`}
+                className="btn-hero btn-hero-call"
+              >
+                <Phone size={17} /> {siteConfig.phoneDisplay}
               </a>
+            </div>
+
+            <div className="hero-info">
+              <span><Clock size={14} /> {siteConfig.workingHours}</span>
+              <span><MapPin size={14} /> {siteConfig.addressFull}</span>
+              <span><CheckCircle2 size={14} /> Yusuf Ulusoy</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Live Bar */}
-      <div className="live-bar">
-        <div className="container live-bar-inner">
-          <span><span className="live-dot"></span> Sitede şu an aktif ziyaretçiler var</span>
-          <span><Eye size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} /> Toplam {visitorCount} ziyaretçi</span>
-          <span><Clock size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} /> {siteConfig.workingHours}</span>
-        </div>
-      </div>
-
-      {/* Products */}
+      {/* Ürünler Kataloğu */}
       <main className="products-section" id="urunler">
         <div className="container">
-          <h2 className="section-title">Mevcut Malzemeler</h2>
+          <div className="section-head-wrap">
+            <div>
+              <div className="section-label">GÜNCEL STOKLAR</div>
+              <h2 className="section-title">Depoda Hazır Malzemeler</h2>
+            </div>
+            <div className="section-note">
+              Ürün fotoğraflarını ve detaylarını incelemek için karta tıklayın.
+            </div>
+          </div>
 
           <div className="filter-bar">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+            <div className="filter-scroll">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
             <input
               type="text"
               className="search-input"
-              placeholder="Malzeme ara..."
+              placeholder="Ürün veya malzeme ara..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
 
           <div className="products-grid">
-            {filtered.map(product => (
-              <article key={product.id} className="card">
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="card-img"
-                  loading="lazy"
-                />
-                <div className="card-body">
-                  <div className="card-category">{product.category}</div>
-                  <h3 className="card-title">{product.title}</h3>
-                  <p className="card-desc">{product.description}</p>
-                  <div className="card-meta">
-                    <span className="stock">● {product.stock}</span>
-                    <span>{product.condition}</span>
+            {filtered.map(product => {
+              const imgList = parseImages(product.images || product.image);
+              const coverImg = imgList[0] || product.image || '';
+              return (
+                <article 
+                  key={product.id} 
+                  className="card card-interactive"
+                  onClick={() => setActiveModalProduct(product)}
+                >
+                  <div className="card-img-wrap">
+                    {coverImg ? (
+                      <img src={coverImg} alt={product.title} className="card-img" loading="lazy" />
+                    ) : (
+                      <div className="no-image-placeholder">Görsel Yok</div>
+                    )}
+                    <span className="card-tag">{product.category}</span>
+                    {imgList.length > 1 && (
+                      <span className="card-multi-badge">
+                        📷 {imgList.length} Fotoğraf
+                      </span>
+                    )}
                   </div>
-                  <div className="card-actions">
-                    <a href={`tel:${siteConfig.phoneRaw}`} className="btn btn-call btn-sm">
-                      <Phone size={15} /> Ara
-                    </a>
-                    <a href={waLink(product.title)} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp btn-sm">
-                      <MessageCircle size={15} /> WhatsApp
-                    </a>
+                  <div className="card-body">
+                    <h3 className="card-title">{product.title}</h3>
+                    <p className="card-desc">{product.description}</p>
+                    <div className="card-meta">
+                      <span className="stock">● {product.stock || 'Mevcut'}</span>
+                      <span className="condition">{product.condition}</span>
+                    </div>
+                    <div className="card-click-hint">
+                      Fotoğrafları & Detayları İncele →
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
 
           {filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: '#64748b' }}>
-              <p style={{ fontSize: 18, fontWeight: 600 }}>Aradığınız malzeme bulunamadı.</p>
-              <p>Bizi arayarak sormak istediğiniz malzemeyi sorun.</p>
+            <div className="empty-state">
+              <p style={{ fontSize: 16, fontWeight: 700 }}>Aradığınız ürün bulunamadı.</p>
+              <p style={{ fontSize: 13, color: '#737373', marginTop: 4 }}>
+                Depomuza sürekli yeni malzemeler (direk, kereste, harç mikseri, klima vs.) gelmektedir. Bizi arayarak bilgi alabilirsiniz.
+              </p>
+              <a href={`tel:${siteConfig.phoneRaw}`} className="btn btn-primary" style={{ marginTop: 14 }}>
+                <Phone size={14} /> Yusuf Ulusoy'u Ara: {siteConfig.phoneDisplay}
+              </a>
             </div>
           )}
         </div>
       </main>
 
-      {/* Facebook */}
-      <section className="facebook-section" id="facebook">
+      {/* Konum & Harita Bölümü */}
+      <section className="location-section" id="konum">
         <div className="container">
-          <div className="fb-card">
-            <div className="fb-header">
-              <div className="fb-title">
-                <div className="fb-icon">f</div>
-                <div>
-                  <div>Facebook Sayfamız</div>
-                  <div style={{ fontSize: 14, color: '#64748b', fontWeight: 500 }}>
-                    Güncel malzeme paylaşımları için takip edin
+          <div className="location-card">
+            <div className="location-details">
+              <div className="section-label">Konum ve Adres</div>
+              <h2 className="location-title">Ulusoy İnşaat — Yusuf Ulusoy</h2>
+              <p className="location-desc">
+                Depomuz Kayseri'de bulunmaktadır. Tüm ikinci el inşaat malzemelerini, harç makinelerini, klimaları ve şantiye ekipmanlarını yerinde görüp teslim alabilirsiniz.
+              </p>
+
+              <div className="location-meta-list">
+                <div className="location-meta-item">
+                  <MapPin size={18} className="loc-icon" />
+                  <div>
+                    <strong>İşletme / Adres</strong>
+                    <span>{siteConfig.addressFull}</span>
+                  </div>
+                </div>
+                <div className="location-meta-item">
+                  <Phone size={18} className="loc-icon" />
+                  <div>
+                    <strong>Yetkili & İletişim</strong>
+                    <span>{siteConfig.ownerName} ({siteConfig.phoneDisplay})</span>
+                  </div>
+                </div>
+                <div className="location-meta-item">
+                  <Clock size={18} className="loc-icon" />
+                  <div>
+                    <strong>Çalışma Saatleri</strong>
+                    <span>{siteConfig.workingHours}</span>
                   </div>
                 </div>
               </div>
-              <a href={siteConfig.facebookPageUrl} target="_blank" rel="noopener noreferrer" className="btn btn-facebook">
-                <ExternalLink size={16} /> Facebook'ta Takip Et
-              </a>
+
+              <div className="location-btn-group">
+                <a
+                  href={siteConfig.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary btn-lg"
+                >
+                  <Navigation size={16} /> Google Haritalar'da Aç (Navigasyon)
+                </a>
+                <a
+                  href={`tel:${siteConfig.phoneRaw}`}
+                  className="btn btn-outline btn-lg"
+                >
+                  <Phone size={16} /> Doğrudan Ara
+                </a>
+              </div>
             </div>
-            <iframe
-              title="Facebook Sayfası"
-              src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(siteConfig.facebookPageUrl)}&tabs=timeline&width=500&height=400&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true`}
-              width="100%"
-              height="400"
-              style={{ border: 'none', borderRadius: 8, maxWidth: 600, display: 'block', margin: '0 auto' }}
-              scrolling="no"
-              frameBorder="0"
-              allowFullScreen
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-            />
+
+            <div className="location-map-wrap">
+              <iframe
+                title="Ulusoy İnşaat Konum Haritası"
+                src={siteConfig.mapsEmbedUrl}
+                className="location-iframe"
+                loading="lazy"
+                allowFullScreen
+              />
+              <div className="map-badge-overlay">
+                <span>📍 Ulusoy İnşaat</span>
+                <a href={siteConfig.mapsUrl} target="_blank" rel="noopener noreferrer">Haritada Büyüt ↗</a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* Facebook Showcase Bölümü (Kullanıcı Profil Bağlantısı) */}
+      <section className="facebook-section" id="facebook">
+        <div className="container">
+          <div className="fb-profile-showcase">
+            <div className="fb-profile-head">
+              <div className="fb-badge-icon">f</div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 800 }}>Yusuf Ulusoy / Ulusoy İnşaat Facebook Profili</h3>
+                  <span className="fb-verified-badge" title="Doğrulanmış Profil">✓</span>
+                </div>
+                <p style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>
+                  Güncel şantiye fotoğraflarımız, yeni gelen ikinci el inşaat malzemeleri ve günlük duyurularımız için profilimizi ziyaret edin.
+                </p>
+              </div>
+              <a 
+                href={siteConfig.facebookPageUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn-fb-open"
+              >
+                Facebook'ta Görüntüle & Takip Et <ExternalLink size={15} />
+              </a>
+            </div>
+
+            <div className="fb-features-row">
+              <div className="fb-feat-item">
+                <span className="fb-feat-icon">📸</span>
+                <div>
+                  <strong>Canlı Fotoğraflar</strong>
+                  <span>Gelen teleskopik direk, iskele ve kereste yüklemeleri</span>
+                </div>
+              </div>
+              <div className="fb-feat-item">
+                <span className="fb-feat-icon">⚡</span>
+                <div>
+                  <strong>Hızlı İletişim</strong>
+                  <span>Facebook Messenger veya telefonla anında cevap</span>
+                </div>
+              </div>
+              <div className="fb-feat-item">
+                <span className="fb-feat-icon">🏗️</span>
+                <div>
+                  <strong>Şantiye Alımları</strong>
+                  <span>Kayseri ve çevresi nakit malzeme alım paylaşımları</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SSS */}
       <section className="faq-section" id="sss">
         <div className="container">
+          <div className="section-label">Bilgilendirme</div>
           <h2 className="section-title">Sıkça Sorulan Sorular</h2>
           <div className="faq-list">
             {faqList.map((faq, i) => (
@@ -226,42 +358,65 @@ export default function HomePage() {
         <div className="container">
           <div className="footer-grid">
             <div>
-              <h4>{siteConfig.businessName}</h4>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <img src="/logo.svg" alt="Logo" style={{ width: 36, height: 36, borderRadius: 8 }} />
+                <h4 style={{ margin: 0, fontSize: 16 }}>Ulusoy İnşaat — Yusuf Ulusoy</h4>
+              </div>
               <p>{siteConfig.description}</p>
+              <div style={{ marginTop: 14 }}>
+                <a
+                  href={siteConfig.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  <MapPin size={14} /> Harita Konumu: Ulusoy İnşaat ↗
+                </a>
+              </div>
             </div>
             <div>
-              <h4>İletişim</h4>
+              <h4>İletişim & Konum</h4>
               <ul>
-                <li>📞 <a href={`tel:${siteConfig.phoneRaw}`} style={{ color: '#fff', fontWeight: 700 }}>{siteConfig.phoneDisplay}</a></li>
-                <li>📍 {siteConfig.addressFull}</li>
-                <li>🕐 {siteConfig.workingHours}</li>
+                <li><strong>Yetkili:</strong> {siteConfig.ownerName}</li>
+                <li><strong>İşletme:</strong> {siteConfig.companyName}</li>
+                <li><strong>Telefon:</strong> {siteConfig.phoneDisplay}</li>
+                <li><strong>Şehir:</strong> Kayseri</li>
+                <li><strong>Çalışma:</strong> {siteConfig.workingHours}</li>
               </ul>
             </div>
             <div>
-              <h4>Bağlantılar</h4>
+              <h4>Hızlı Menü</h4>
               <ul>
-                <li><a href="#urunler">Malzemeler</a></li>
-                <li><a href="#facebook">Facebook</a></li>
+                <li><a href="#urunler">Ürün Kataloğu</a></li>
+                <li><a href="#konum">Konum & Yol Tarifi</a></li>
+                <li><a href="#facebook">Facebook Profili</a></li>
                 <li><a href="#sss">Sıkça Sorulan Sorular</a></li>
-                <li><a href={waLink()} target="_blank" rel="noopener noreferrer" style={{ color: '#22c55e' }}>WhatsApp Hattı</a></li>
               </ul>
             </div>
           </div>
           <div className="footer-bottom">
-            © {new Date().getFullYear()} {siteConfig.businessName}
+            © {new Date().getFullYear()} Ulusoy İnşaat — Yusuf Ulusoy | Kayseri İkinci El İnşaat Malzemeleri
           </div>
         </div>
       </footer>
 
-      {/* Sticky Bottom */}
-      <div className="sticky-bar">
-        <a href={`tel:${siteConfig.phoneRaw}`} className="btn btn-call">
-          <Phone size={20} /> HEMEN ARA
+      {/* Floating Action Buttons */}
+      <div className="fab-container">
+        <a href={`tel:${siteConfig.phoneRaw}`} className="fab fab-phone" title="Telefonla Ara">
+          <Phone size={22} />
         </a>
-        <a href={waLink()} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp">
-          <MessageCircle size={20} /> WHATSAPP
+        <a href={waLink()} target="_blank" rel="noopener noreferrer" className="fab fab-whatsapp" title="WhatsApp Mesajı">
+          <MessageCircle size={22} />
         </a>
       </div>
+
+      {/* ÜRÜN DETAY & ÇOKLU FOTOĞRAF KAYDIRICI MODALI */}
+      {activeModalProduct && (
+        <ProductDetailModal
+          product={activeModalProduct}
+          onClose={() => setActiveModalProduct(null)}
+        />
+      )}
     </>
   );
 }
