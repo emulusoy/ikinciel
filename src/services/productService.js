@@ -36,7 +36,7 @@ export function getLocalProducts() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= 8) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed.map(p => ({
           ...p,
           images: parseImages(p.images || p.image),
@@ -249,6 +249,48 @@ export async function seedProductsToSupabase() {
   const { error } = await supabase.from('products').insert(items);
   if (error) throw new Error(error.message);
   return true;
+}
+
+// Yereldeki ve koddaki tüm malzemeleri canlı Supabase veritabanına akıllı aktarma (Mükerrer eklemez)
+export async function syncAllProductsToSupabase() {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase bağlı değil.');
+
+  // Mevcut Supabase ürünlerini çek
+  const { data: existingInDb, error: fetchErr } = await supabase.from('products').select('title');
+  if (fetchErr) throw new Error(fetchErr.message);
+
+  const existingTitles = new Set((existingInDb || []).map(p => (p.title || '').trim().toLowerCase()));
+
+  // Yereldeki ürünleri (default + local) al
+  const localList = getLocalProducts();
+  const sourceList = localList.length > 0 ? localList : defaultProducts;
+
+  // Sadece DB'de eksik olanları hazırla
+  const toInsert = [];
+  sourceList.forEach(p => {
+    const cleanTitle = (p.title || '').trim().toLowerCase();
+    if (cleanTitle && !existingTitles.has(cleanTitle)) {
+      toInsert.push({
+        title: p.title,
+        category: p.category || 'Diğer',
+        condition: p.condition || 'Temiz 2. El',
+        stock: p.stock || 'Depoda Mevcut',
+        description: p.description || '',
+        image: serializeImages(p.images && p.images.length > 0 ? p.images : [p.image])
+      });
+      existingTitles.add(cleanTitle);
+    }
+  });
+
+  if (toInsert.length === 0) {
+    return { count: 0, message: 'Tüm yerel malzemeler zaten canlı veritabanında (Supabase) mevcut.' };
+  }
+
+  const { data, error } = await supabase.from('products').insert(toInsert).select();
+  if (error) throw new Error(error.message);
+
+  return { count: toInsert.length, message: `${toInsert.length} adet yerel malzeme canlı veritabanına başarıyla aktarıldı!` };
 }
 
 // KATEGORİ YÖNETİMİ (Yeni Kategori Ekleme, Listeleme ve Kalıcı Saklama)

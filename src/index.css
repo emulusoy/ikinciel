@@ -4517,5 +4517,44 @@ img { max-width: 100%; display: block; }
   margin: 0 auto 10px;
 }
 
+/* ==========================================================================
+   CANLI SUPABASE SENKRONİZASYON KUTUSU
+   ========================================================================== */
+
+.admin-sync-recommend-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sync-box-text strong {
+  display: block;
+  font-size: 14px;
+  color: #1e3a8a;
+  margin-bottom: 2px;
+}
+
+.sync-box-text p {
+  font-size: 13px;
+  color: #1e40af;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.btn-sync-cloud {
+  white-space: nowrap;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+
 
 

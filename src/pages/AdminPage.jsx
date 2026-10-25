@@ -14,7 +14,7 @@ import { categories } from '../data/products';
 import { getSupabaseConfig, saveSupabaseConfig } from '../supabaseClient';
 import { 
   fetchProducts, addProduct, updateProduct, deleteProduct, 
-  uploadImageToStorage, seedProductsToSupabase, parseImages,
+  uploadImageToStorage, seedProductsToSupabase, syncAllProductsToSupabase, parseImages,
   getAllCategories, saveCustomCategory
 } from '../services/productService';
 import { getAnalyticsSummary, clearAnalyticsData } from '../services/analyticsService';
@@ -409,6 +409,21 @@ export default function AdminPage() {
       await loadData();
     } catch (err) {
       alert('Hata: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Yereldeki / Koddaki Eksik Ürünleri Canlı Supabase'e Akıllı Senkronize Etme
+  const handleSyncToSupabase = async () => {
+    if (!confirm('Yerelde ve kodlarda bulunan tüm malzemeler canlı Supabase veritabanına aktarılsın mı? (Mevcut olanlar mükerrer eklenmez)')) return;
+    setLoading(true);
+    try {
+      const res = await syncAllProductsToSupabase();
+      notify(res.message);
+      await loadData();
+    } catch (err) {
+      alert('Aktarım Hatası: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -842,6 +857,26 @@ ${prodUrl}`;
                 </div>
               </div>
 
+              {/* CANLI DB İLE YEREL SENKRONİZASYON BİLDİRİMİ */}
+              {supabaseConfig.isConfigured && products.length < 12 && (
+                <div className="admin-sync-recommend-box">
+                  <div className="sync-box-text">
+                    <strong>💡 Yerel Malzemeler Bulut Veritabanına Henüz Aktarılmamış Olabilir</strong>
+                    <p>
+                      Şu an canlı Supabase veritabanınızda <strong>{products.length}</strong> malzeme listeleniyor. Kodlardaki ve yereldeki tüm 12 hazır inşaat malzemesini tek tıkla canlı veritabanınıza yükleyebilirsiniz.
+                    </p>
+                  </div>
+                  <button 
+                    className="btn btn-primary btn-sm btn-sync-cloud"
+                    onClick={handleSyncToSupabase}
+                    disabled={loading}
+                    title="Yereldeki eksik malzemeleri canlı Supabase veritabanına aktar"
+                  >
+                    <Database size={14} /> Tüm Malzemeleri Canlı DB'ye Aktar
+                  </button>
+                </div>
+              )}
+
               {/* 200+ ÜRÜN İÇİN GELİŞMİŞ ARAMA, FİLTRE & ARAÇ ÇUBUĞU */}
               <div className="admin-advanced-filter-panel">
                 <div className="filter-main-row">
@@ -925,6 +960,17 @@ ${prodUrl}`;
                   >
                     <RefreshCw size={13} className={loading ? 'spin' : ''} />
                   </button>
+
+                  {supabaseConfig.isConfigured && (
+                    <button
+                      className="btn btn-outline btn-sm"
+                      onClick={handleSyncToSupabase}
+                      title="Yereldeki eksik ürünleri canlı Supabase veritabanına aktar"
+                      disabled={loading}
+                    >
+                      <Database size={13} /> DB'ye Aktar
+                    </button>
+                  )}
                 </div>
 
                 {showAdvancedFilters && (
