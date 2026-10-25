@@ -72,7 +72,7 @@ export async function fetchProducts() {
       }
 
       if (data && data.length > 0) {
-        return data.map(item => {
+        const mapped = data.map(item => {
           const images = parseImages(item.image);
           return {
             id: item.id.toString(),
@@ -86,6 +86,9 @@ export async function fetchProducts() {
             created_at: item.created_at
           };
         });
+        // Yerel önbelleği her zaman canlı bulut verileriyle senkron tut
+        saveLocalProducts(mapped);
+        return mapped;
       }
     } catch (err) {
       console.warn('Supabase connection error:', err);
@@ -94,13 +97,13 @@ export async function fetchProducts() {
   return getLocalProducts();
 }
 
-// Ürün Ekleme
+// Ürün Ekleme (Doğrudan Supabase Bulut Veritabanına Yazar)
 export async function addProduct(product) {
   const supabase = getSupabase();
   const images = parseImages(product.images || product.image);
   const serializedImg = serializeImages(images.length > 0 ? images : [product.image]);
 
-  const newProduct = {
+  let newProduct = {
     ...product,
     id: Date.now().toString(),
     image: images[0] || product.image || '',
@@ -123,18 +126,18 @@ export async function addProduct(product) {
         .select();
 
       if (!error && data && data[0]) {
-        return { ...newProduct, id: data[0].id.toString() };
+        newProduct = { ...newProduct, id: data[0].id.toString() };
+      } else if (error) {
+        console.warn('Supabase insert warning:', error?.message);
       }
-      console.warn('Supabase insert error, fallback:', error?.message);
     } catch (e) {
       console.warn('Supabase insert failed:', e);
     }
   }
 
-  // Fallback: Yerel kayıt
-  const local = getLocalProducts();
-  const updated = [newProduct, ...local];
-  saveLocalProducts(updated);
+  // Yerel önbelleği de her zaman güncelle
+  const local = getLocalProducts().filter(p => p.id !== newProduct.id);
+  saveLocalProducts([newProduct, ...local]);
   return newProduct;
 }
 
@@ -165,14 +168,15 @@ export async function updateProduct(id, product) {
         })
         .eq('id', id);
 
-      if (!error) return updatedProduct;
-      console.warn('Supabase update error:', error?.message);
+      if (error) {
+        console.warn('Supabase update warning:', error?.message);
+      }
     } catch (e) {
       console.warn('Supabase update failed:', e);
     }
   }
 
-  // Fallback: Yerel güncelleme
+  // Yerel önbelleği güncelle
   const local = getLocalProducts();
   const updated = local.map(p => p.id === id ? { ...p, ...updatedProduct } : p);
   saveLocalProducts(updated);
@@ -190,14 +194,15 @@ export async function deleteProduct(id) {
         .delete()
         .eq('id', id);
 
-      if (!error) return true;
-      console.warn('Supabase delete error:', error?.message);
+      if (error) {
+        console.warn('Supabase delete warning:', error?.message);
+      }
     } catch (e) {
       console.warn('Supabase delete failed:', e);
     }
   }
 
-  // Fallback: Yerel silme
+  // Yerel önbellekten sil
   const local = getLocalProducts();
   const updated = local.filter(p => p.id !== id);
   saveLocalProducts(updated);

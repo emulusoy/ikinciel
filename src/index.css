@@ -128,21 +128,51 @@ img { max-width: 100%; display: block; }
   gap: 8px;
 }
 
+.btn-header-map-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+  transition: all 0.15s ease-in-out;
+  text-decoration: none;
+}
+
+.btn-header-map-modern:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.16);
+}
+
+.map-pin-icon-bounce {
+  color: #ef4444;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.btn-header-map-modern:hover .map-pin-icon-bounce {
+  transform: scale(1.15) translateY(-1px);
+}
+
 .btn-header-map {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 7px 12px;
   border-radius: 6px;
-  background: var(--bg-subtle);
-  border: 1px solid var(--border);
-  color: #334155;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
   font-size: 13px;
-  font-weight: 600;
-}
-
-.btn-header-map:hover {
-  background: #e2e8f0;
+  font-weight: 700;
 }
 
 .btn-header-phone {
@@ -150,47 +180,86 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #0f172a;
   color: #fff;
   font-size: 13px;
   font-weight: 700;
-  transition: background 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  transition: background 0.15s, transform 0.15s;
 }
 
 .btn-header-phone:hover {
   background: #1e293b;
+  transform: translateY(-1px);
 }
 
-/* Mobilde Sağ Bölüm: Hızlı Arama Butonu + Menü Butonu */
+/* Mobilde Sağ Bölüm: Harita + Hızlı Arama Butonu + Menü Butonu */
 .mobile-header-right {
   display: none;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.mobile-quick-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.mobile-quick-map svg {
+  color: #ef4444;
+  flex-shrink: 0;
+}
+
+.mobile-quick-map:active {
+  background: #dbeafe;
+  transform: scale(0.97);
 }
 
 .mobile-quick-call {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 6px 11px;
   background: #16a34a;
   color: #fff;
-  border-radius: 6px;
-  font-size: 12.5px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 700;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.2);
+  transition: all 0.15s;
+}
+
+.mobile-quick-call:active {
+  background: #15803d;
+  transform: scale(0.97);
 }
 
 .mobile-menu-toggle {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  background: var(--bg-subtle);
+  border-radius: 7px;
+  background: #f8fafc;
   color: #0f172a;
   border: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.mobile-menu-toggle:active {
+  background: #e2e8f0;
 }
 
 /* =========================================================================
@@ -355,16 +424,28 @@ img { max-width: 100%; display: block; }
 }
 
 /* =========================================================================
-   2. YENİLENMİŞ HERO (İLK HOŞGELDİNİZ) VE MOBİL BUTON DÜZENİ
+   2. YENİLENMİŞ, TAM ORTALANMIŞ HERO VE 4 GÜÇLÜ SATICI / DEĞER KARTI
    ========================================================================= */
 .hero-clean {
-  background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
-  padding: 34px 0 40px;
+  background: radial-gradient(circle at 50% 0%, #eff6ff 0%, #f8fafc 70%, #ffffff 100%);
+  padding: 44px 0 52px;
   border-bottom: 1px solid #e2e8f0;
 }
 
+.hero-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .hero-main-card {
-  max-width: 820px;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hero-badge-tag {
@@ -373,154 +454,209 @@ img { max-width: 100%; display: block; }
   gap: 8px;
   background: #ffffff;
   border: 1px solid #cbd5e1;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #1e3a8a;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  margin-bottom: 18px;
 }
 
 .badge-bullet {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
 }
 
 .hero-main-heading {
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 900;
   color: #0f172a;
   line-height: 1.25;
-  letter-spacing: -0.6px;
-  margin-bottom: 12px;
+  letter-spacing: -0.7px;
+  margin-bottom: 16px;
+  text-align: center;
+  max-width: 820px;
 }
 
 .hero-main-desc {
-  font-size: 14.5px;
+  font-size: 15.5px;
   color: #475569;
-  line-height: 1.6;
-  margin-bottom: 22px;
+  line-height: 1.65;
+  margin-bottom: 26px;
+  text-align: center;
+  max-width: 740px;
 }
 
 .hero-main-desc strong {
   color: #0f172a;
+  font-weight: 700;
 }
 
-/* Modern, Dengeli Eylem Butonları Alanı */
-.hero-actions-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 22px;
-  max-width: 600px;
-}
-
-.hero-cta-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.cta-card {
+/* Ortalanmış Eylem Butonları */
+.hero-buttons-group {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 760px;
+  margin-bottom: 34px;
+}
+
+.btn-hero-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 22px;
   border-radius: 10px;
-  transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: var(--shadow-sm);
-}
-
-.cta-card:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.cta-card-phone {
   background: #0f172a;
   color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  text-decoration: none;
 }
 
-.cta-card-wa {
+.btn-hero-call:hover {
+  background: #1e293b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.28);
+}
+
+.btn-hero-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border-radius: 10px;
   background: #16a34a;
   color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.22);
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  text-decoration: none;
 }
 
-.cta-icon-wrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  display: flex;
+.btn-hero-wa:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.3);
+}
+
+.btn-hero-map {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  gap: 8px;
+  padding: 13px 20px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  text-decoration: none;
 }
 
-.cta-text-wrap {
+.btn-hero-map:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* 4 GÜÇLÜ GÜVEN VE DEĞER KARTI GRID (GENELDE SATICIYIZ MODELİ) */
+.hero-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+}
+
+.trust-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 16px;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-}
-
-.cta-heading {
-  font-size: 13.5px;
-  font-weight: 800;
-  line-height: 1.15;
-}
-
-.cta-subtext {
-  font-size: 11px;
-  opacity: 0.88;
-  font-weight: 600;
-  white-space: nowrap;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.hero-location-link {
+.trust-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.trust-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #334155;
-  font-size: 12.5px;
-  font-weight: 700;
-  transition: all 0.15s;
-}
-
-.hero-location-link:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
-}
-
-.hero-features-bar {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding-top: 16px;
-  border-top: 1px solid rgba(203, 213, 225, 0.6);
-}
-
-.feat-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #334155;
-}
-
-.feat-icon {
-  color: #16a34a;
   flex-shrink: 0;
+}
+
+.trust-card-icon.icon-stock {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+}
+
+.trust-card-icon.icon-check {
+  background: #ecfdf5;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.trust-card-icon.icon-cash {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.trust-card-icon.icon-clock {
+  background: #f3e8ff;
+  color: #7c3aed;
+  border: 1px solid #e9d5ff;
+}
+
+.trust-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trust-card-body strong {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.3;
+}
+
+.trust-card-body span {
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.5;
 }
 
 /* =========================================================================
@@ -2607,7 +2743,13 @@ img { max-width: 100%; display: block; }
   font-size: 11px;
 }
 
-/* ===== TABLET BREAKPOINT (≤ 860px) ===== */
+@media (max-width: 1024px) and (min-width: 861px) {
+  .hero-trust-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== TABLET & MOBİL BREAKPOINT (≤ 860px) ===== */
 @media (max-width: 860px) {
   /* --- NAVBAR: Masaüstü gizle, Mobil göster --- */
   .desktop-nav,
@@ -2619,56 +2761,70 @@ img { max-width: 100%; display: block; }
   .brand-subname { font-size: 10px; }
   .brand-icon { width: 32px; height: 32px; }
 
-  /* --- HERO: Daha sade ve daha iyi butonlar --- */
-  .hero-clean { padding: 20px 0 26px; }
+  /* --- HERO: Tam ortalanmış, ferah ve güçlü mobil düzen --- */
+  .hero-clean { padding: 24px 0 30px; }
+  .hero-main-card {
+    text-align: center;
+    align-items: center;
+  }
   .hero-main-heading {
-    font-size: 21px;
+    font-size: 22px;
     line-height: 1.3;
     margin-bottom: 10px;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
+    text-align: center;
   }
   .hero-main-desc {
-    font-size: 13px;
-    margin-bottom: 14px;
+    font-size: 13.5px;
+    margin-bottom: 18px;
     line-height: 1.55;
+    text-align: center;
   }
   .hero-badge-tag {
     font-size: 11px;
-    padding: 4px 10px;
-    margin-bottom: 10px;
+    padding: 5px 12px;
+    margin-bottom: 12px;
   }
 
-  /* Hero CTA Butonları — Mobilde tam genişlik, daha büyük tıklama alanı */
-  .hero-actions-container {
-    max-width: 100%;
+  /* Hero Butonları — Mobilde tam genişlik, rahat basılabilir */
+  .hero-buttons-group {
+    flex-direction: column;
+    gap: 9px;
+    width: 100%;
+    margin-bottom: 22px;
   }
-  .hero-cta-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .cta-card {
-    padding: 10px;
-    gap: 8px;
-    border-radius: 10px;
-  }
-  .cta-icon-wrap {
-    width: 34px;
-    height: 34px;
-  }
-  .cta-heading { font-size: 13px; }
-  .cta-subtext { font-size: 10.5px; }
-
-  .hero-location-link {
-    font-size: 12px;
-    padding: 9px 10px;
+  .btn-hero-call,
+  .btn-hero-wa,
+  .btn-hero-map {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    justify-content: center;
   }
 
-  .hero-features-bar {
+  /* 4 Güven ve Değer Kartı — Mobilde 2x2 veya tekli dikey akış */
+  .hero-trust-grid {
+    grid-template-columns: 1fr;
     gap: 10px;
-    padding-top: 12px;
+    width: 100%;
   }
-  .feat-chip {
-    font-size: 11.5px;
+  .trust-card {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  .trust-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .trust-card-body strong {
+    font-size: 13.5px;
+  }
+  .trust-card-body span {
+    font-size: 12px;
   }
 
   /* --- ÜRÜN KATALOG --- */

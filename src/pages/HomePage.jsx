@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Phone, MessageCircle, MapPin, Clock, ExternalLink, Navigation, 
-  CheckCircle2, Menu, X, Search, ArrowRight, Package, HelpCircle, ChevronRight
+  CheckCircle2, Menu, X, Search, ArrowRight, Package, HelpCircle, ChevronRight,
+  Banknote
 } from 'lucide-react';
 import { siteConfig } from '../siteConfig';
 import { categories, faqList } from '../data/products';
@@ -86,17 +87,18 @@ export default function HomePage() {
             <a href="#sss" className="desktop-nav-link">S.S.S.</a>
           </nav>
 
-          {/* Masaüstü Hızlı İletişim Butonları */}
+          {/* Masaüstü Hızlı İletişim & Harita Butonları */}
           <div className="desktop-header-actions">
             <a
               href={siteConfig.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleMapClick}
-              className="btn-header-map"
-              title="Google Haritalar"
+              className="btn-header-map-modern"
+              title="Kayseri Depo Konumu (Google Haritalar)"
             >
-              <MapPin size={14} /> Harita
+              <MapPin size={14} className="map-pin-icon-bounce" />
+              <span>Kayseri Depo</span>
             </a>
             <a 
               href={`tel:${siteConfig.phoneRaw}`} 
@@ -107,15 +109,26 @@ export default function HomePage() {
             </a>
           </div>
 
-          {/* Mobilde Sağ Bölüm: Hızlı Arama Butonu + Menü Butonu */}
+          {/* Mobilde Sağ Bölüm: Harita + Hızlı Arama Butonu + Menü Butonu */}
           <div className="mobile-header-right">
+            <a
+              href={siteConfig.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleMapClick}
+              className="mobile-quick-map"
+              title="Kayseri Depo Konumu"
+            >
+              <MapPin size={14} />
+              <span>Konum</span>
+            </a>
             <a 
               href={`tel:${siteConfig.phoneRaw}`} 
               onClick={handlePhoneClick}
               className="mobile-quick-call"
               title="Hemen Ara"
             >
-              <Phone size={15} />
+              <Phone size={14} />
               <span>Ara</span>
             </a>
             <button 
@@ -185,7 +198,7 @@ export default function HomePage() {
       )}
 
 
-      {/* SADE, ŞIK VE GÜVEN VEREN HERO (İLK HOŞGELDİNİZ) BÖLÜMÜ */}
+      {/* SADE, ŞIK, TAM ORTALANMIŞ VE GÜVEN VEREN HERO BÖLÜMÜ */}
       <section className="hero-clean">
         <div className="container hero-container">
           <div className="hero-main-card">
@@ -195,15 +208,15 @@ export default function HomePage() {
             </div>
 
             <h1 className="hero-main-heading">
-              İkinci El İnşaat Malzemeleri & Ekipman Alım-Satımı
+              Kayseri İkinci El & Sıfır İnşaat Malzemeleri
             </h1>
 
             <p className="hero-main-desc">
-              Teleskopik demir direk, kalıp altı iskele, ithal & yerli plywood, inşaat kerestesi, harç karma makinesi (betoniyer), şantiye klimaları ve ekipmanları. 
-              <strong> Değerinde nakit alım, uygun fiyata satış ve şantiyenize teslimat.</strong>
+              Teleskopik demir direk, kalıp altı iskele, plywood, inşaat kerestesi, harç karma makinesi (betoniyer) ve şantiye ekipmanları. 
+              <strong> Depomuzda adetli hazır stok, yerinde deneyerek teslimat ve değerinde nakit alım.</strong>
             </p>
 
-            {/* Şık, Modern ve Hem Webde Hem Mobilde Kusursuz Buton Düzeni */}
+            {/* Ortalanmış Eylem Butonları */}
             <div className="hero-buttons-group">
               <a
                 href={`tel:${siteConfig.phoneRaw}`}
@@ -219,12 +232,12 @@ export default function HomePage() {
                 href={waLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={handleWaClick}
+                onClick={() => handleWaClick()}
                 className="btn-hero-wa"
                 title="WhatsApp ile Bilgi Al"
               >
                 <MessageCircle size={17} />
-                <span>WhatsApp ile Fiyat Al</span>
+                <span>WhatsApp Fiyat Hattı</span>
               </a>
 
               <a
@@ -240,20 +253,46 @@ export default function HomePage() {
               </a>
             </div>
 
+            {/* 4 BÜYÜK GÜVEN VE DEĞER KARTI: BİZ GENELDE SATICIYIZ */}
+            <div className="hero-trust-grid">
+              <div className="trust-card">
+                <div className="trust-card-icon icon-stock">
+                  <Package size={22} />
+                </div>
+                <div className="trust-card-body">
+                  <strong>Geniş Stoktan Satış</strong>
+                  <span>Biz genelde satıcıyız; depomuzda hazır, sayıp inceleyerek hemen teslim alabileceğiniz zengin malzeme stoğu.</span>
+                </div>
+              </div>
 
-            {/* Güven ve Kolaylık Maddeleri */}
-            <div className="hero-features-bar">
-              <div className="feat-chip">
-                <CheckCircle2 size={16} className="feat-icon" />
-                <span>Değerinde Nakit Alım</span>
+              <div className="trust-card">
+                <div className="trust-card-icon icon-check">
+                  <CheckCircle2 size={22} />
+                </div>
+                <div className="trust-card-body">
+                  <strong>Yerinde Kontrol & Teslimat</strong>
+                  <span>Kayseri depomuzda bizzat malzemeleri görüp, makineleri çalıştırıp test ederek teslim alabilirsiniz.</span>
+                </div>
               </div>
-              <div className="feat-chip">
-                <CheckCircle2 size={16} className="feat-icon" />
-                <span>Yerinde Kontrol & Teslimat</span>
+
+              <div className="trust-card">
+                <div className="trust-card-icon icon-cash">
+                  <Banknote size={22} />
+                </div>
+                <div className="trust-card-body">
+                  <strong>Değerinde Nakit Alım</strong>
+                  <span>Şantiyenizden artan teleskopik direk, iskele, plywood ve makineleri değerinde anında nakit alıyoruz.</span>
+                </div>
               </div>
-              <div className="feat-chip">
-                <Clock size={16} className="feat-icon" />
-                <span>Haftanın 7 Günü Açık</span>
+
+              <div className="trust-card">
+                <div className="trust-card-icon icon-clock">
+                  <Clock size={22} />
+                </div>
+                <div className="trust-card-body">
+                  <strong>Haftanın 7 Günü Açık</strong>
+                  <span>İşleriniz aksamasın diye 07:30 - 19:30 saatleri arasında depomuz açık, teslimatımız aktiftir.</span>
+                </div>
               </div>
             </div>
           </div>

@@ -6,14 +6,19 @@ export function cleanSupabaseUrl(rawUrl) {
   return rawUrl.trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
 }
 
+// Projenin resmi canlı Supabase Bulut Veritabanı bilgileri (Canlıda ve yerelde %100 aynı DB'ye bağlanır)
+const DEFAULT_SUPABASE_URL = 'https://stbgegzzazlxgoediaku.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0YmdlZ3p6YXpseGdvZWRpYWt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NjM1NzgsImV4cCI6MjEwODQzOTU3OH0.n7o_EyKCwKAYoTVGoe8I351_znxP8DfY68IkrkBuwf4';
+
 export function getSupabaseConfig() {
   const envUrl = cleanSupabaseUrl(import.meta.env.VITE_SUPABASE_URL);
   const envKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
   const localUrl = cleanSupabaseUrl(localStorage.getItem('supabase_url'));
   const localKey = (localStorage.getItem('supabase_anon_key') || '').trim();
 
-  const url = envUrl || localUrl || '';
-  const key = envKey || localKey || '';
+  // Öncelik sırası: Yerel ayar > .env değişkeni > Varsayılan canlı Supabase bağlantısı
+  const url = localUrl || envUrl || DEFAULT_SUPABASE_URL;
+  const key = localKey || envKey || DEFAULT_SUPABASE_ANON_KEY;
 
   return {
     url,
