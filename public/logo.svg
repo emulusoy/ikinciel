@@ -1,54 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0f172a" />
-      <stop offset="100%" stop-color="#1e293b" />
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f2744"/>
     </linearGradient>
     <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#d97706" />
-    </linearGradient>
-    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6" />
-      <stop offset="100%" stop-color="#1d4ed8" />
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
     </linearGradient>
   </defs>
 
-  <!-- Background rounded box -->
-  <rect width="120" height="120" rx="26" fill="url(#bgGrad)" />
-  <rect x="2" y="2" width="116" height="116" rx="24" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2" />
+  <!-- Clean rounded background -->
+  <rect width="160" height="160" rx="28" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle inner border -->
+  <rect x="3" y="3" width="154" height="154" rx="25" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
 
-  <!-- Stylized Crane & Building Structure -->
-  <!-- Tower / Scaffolding grid -->
-  <path d="M 42 96 L 42 36 L 50 36 L 50 96 Z" fill="#94a3b8" />
-  <line x1="42" y1="48" x2="50" y2="48" stroke="#0f172a" stroke-width="2" />
-  <line x1="42" y1="62" x2="50" y2="62" stroke="#0f172a" stroke-width="2" />
-  <line x1="42" y1="76" x2="50" y2="76" stroke="#0f172a" stroke-width="2" />
-  <line x1="42" y1="90" x2="50" y2="90" stroke="#0f172a" stroke-width="2" />
-  <!-- Diagonal braces -->
-  <line x1="42" y1="48" x2="50" y2="62" stroke="#0f172a" stroke-width="1.5" />
-  <line x1="42" y1="62" x2="50" y2="76" stroke="#0f172a" stroke-width="1.5" />
-  <line x1="42" y1="76" x2="50" y2="90" stroke="#0f172a" stroke-width="1.5" />
-
-  <!-- Crane Arm (Jib) -->
-  <polygon points="26,36 94,36 90,40 26,40" fill="url(#accentGrad)" />
-  <!-- Counterweight -->
-  <rect x="24" y="34" width="8" height="9" rx="1.5" fill="#f59e0b" />
-  <!-- Apex tower -->
-  <polygon points="42,36 46,22 50,36" fill="url(#accentGrad)" />
-  <!-- Cable ties -->
-  <line x1="46" y1="22" x2="26" y2="36" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2 1" />
-  <line x1="46" y1="22" x2="84" y2="36" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2 1" />
-
-  <!-- Hook Cable & Block -->
-  <line x1="78" y1="40" x2="78" y2="58" stroke="#cbd5e1" stroke-width="2" />
-  <!-- Load / Box -->
-  <rect x="71" y="58" width="14" height="14" rx="2" fill="url(#blueGrad)" stroke="#60a5fa" stroke-width="1" />
-  <path d="M 74 65 L 82 65" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
-
-  <!-- Base ground line -->
-  <rect x="20" y="96" width="80" height="4" rx="2" fill="url(#accentGrad)" />
-
-  <!-- Letter "U" subtle mark on bottom right -->
-  <text x="60" y="90" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="14" fill="#ffffff" letter-spacing="1">ULUSOY</text>
+  <!-- Stylized "U" letterform - clean, bold, professional -->
+  <!-- Left vertical bar -->
+  <rect x="38" y="36" width="18" height="68" rx="2" fill="#ffffff"/>
+  <!-- Right vertical bar -->
+  <rect x="104" y="36" width="18" height="68" rx="2" fill="#ffffff"/>
+  <!-- Bottom curve connecting bars -->
+  <path d="M38 92 L38 106 C38 122 52 134 80 134 C108 134 122 122 122 106 L122 92 L104 92 L104 106 C104 112 96 118 80 118 C64 118 56 112 56 106 L56 92 Z" fill="#ffffff"/>
+  
+  <!-- Construction accent bar at bottom -->
+  <rect x="38" y="138" width="84" height="5" rx="2.5" fill="url(#accentGrad)"/>
+  
+  <!-- Small accent dot top-left -->
+  <circle cx="47" cy="30" r="3" fill="url(#accentGrad)"/>
 </svg>

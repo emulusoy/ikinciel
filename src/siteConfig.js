@@ -11,7 +11,7 @@ export const siteConfig = {
   phoneDisplay: "0507 320 43 63",
   phoneRaw: "+905073204363",
   whatsappNumber: "905073204363",
-  whatsappDefaultMessage: "Merhaba Yusuf Bey, Ulusoy İnşaat sitenizdeki ikinci el malzemeler hakkında bilgi almak istiyorum.",
+  whatsappDefaultMessage: "Merhaba, Ulusoy İnşaat sitenizdeki ikinci el malzemeler hakkında bilgi almak istiyorum.",
 
   // Konum & Google Haritalar
   city: "Kayseri",

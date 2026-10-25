@@ -250,3 +250,54 @@ export async function seedProductsToSupabase() {
   if (error) throw new Error(error.message);
   return true;
 }
+
+// KATEGORİ YÖNETİMİ (Yeni Kategori Ekleme, Listeleme ve Kalıcı Saklama)
+const STORAGE_KEY_CATEGORIES = 'ikinciel_custom_categories_v1';
+
+export function getCustomCategories() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CATEGORIES);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed.filter(Boolean);
+    }
+  } catch (e) { /* ignore */ }
+  return [];
+}
+
+export function saveCustomCategory(newCategoryName, existingCategories = []) {
+  const trimmed = (newCategoryName || '').trim();
+  if (!trimmed) return { success: false, message: 'Kategori adı boş olamaz.' };
+
+  // Zaten var mı kontrolü (büyük/küçük harf duyarsız)
+  const existing = existingCategories.find(c => c.toLowerCase() === trimmed.toLowerCase());
+  if (existing) {
+    return { success: true, category: existing, isNew: false, message: `"${existing}" kategorisi zaten mevcut, seçildi.` };
+  }
+
+  const custom = getCustomCategories();
+  const existsInCustom = custom.find(c => c.toLowerCase() === trimmed.toLowerCase());
+  if (!existsInCustom) {
+    custom.push(trimmed);
+    localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(custom));
+  }
+  return { success: true, category: trimmed, isNew: true, message: `"${trimmed}" kategorisi başarıyla eklendi!` };
+}
+
+export function getAllCategories(productsList = [], defaultList = []) {
+  const custom = getCustomCategories();
+  const fromProducts = (productsList || []).map(p => p.category).filter(Boolean);
+  const combined = ['Tümü', ...defaultList.filter(c => c !== 'Tümü'), ...custom, ...fromProducts];
+  
+  const seen = new Set();
+  const result = [];
+  combined.forEach(cat => {
+    const lower = cat.toLowerCase();
+    if (!seen.has(lower)) {
+      seen.add(lower);
+      result.push(cat);
+    }
+  });
+  return result;
+}
+
