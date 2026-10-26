@@ -34,9 +34,8 @@ export async function verifyPassword(inputPassword) {
   if (!inputPassword) return false;
   const currentPassword = await getAdminPassword();
   
-  // Şifre kontrolü (Direkt eşleşme veya varsayılan acil durum eşleşmesi)
-  const isMatch = inputPassword === currentPassword || inputPassword === siteConfig.adminPassword;
-  return isMatch;
+  // Sadece güncel şifre geçerlidir (Yeni şifre belirlendikten sonra varsayılan emu1 KESİNLİKLE kabul edilmez)
+  return inputPassword === currentPassword;
 }
 
 // Yönetici şifresini DB'ye ve yerel hafızaya kaydet
@@ -49,6 +48,9 @@ export async function saveAdminPasswordToDB(newPassword) {
   localStorage.setItem(LOCAL_STORAGE_PWD_KEY, cleanPwd);
 
   const supabase = getSupabase();
+  let dbSaved = false;
+  let dbError = null;
+
   if (supabase) {
     try {
       // Önce tablo var mı diye upsert dene
@@ -58,13 +60,17 @@ export async function saveAdminPasswordToDB(newPassword) {
 
       if (error) {
         console.warn('Supabase password save warning (table may need creation):', error.message);
+        dbError = error.message;
+      } else {
+        dbSaved = true;
       }
     } catch (e) {
       console.warn('Supabase DB save error:', e);
+      dbError = e.message;
     }
   }
 
-  return true;
+  return { success: true, dbSaved, dbError, password: cleanPwd };
 }
 
 // Oturum kontrolü

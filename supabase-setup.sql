@@ -98,3 +98,33 @@ create policy "Public Read Analytics"
   on public.site_analytics for select
   using (true);
 
+-- =========================================================================
+-- 5. YÖNETİCİ ŞİFRESİ VE AYARLAR TABLOSU (admin_settings)
+-- Admin paneli giriş şifresinin Supabase bulutta saklanması için gereklidir.
+-- =========================================================================
+create table if not exists public.admin_settings (
+  key text primary key,
+  value text not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now())
+);
+
+alter table public.admin_settings enable row level security;
+
+-- Admin şifresini okuma politikası
+drop policy if exists "Public Read Admin Settings" on public.admin_settings;
+create policy "Public Read Admin Settings"
+  on public.admin_settings for select
+  using (true);
+
+-- Admin şifresini ekleme politikası
+drop policy if exists "Public Insert Admin Settings" on public.admin_settings;
+create policy "Public Insert Admin Settings"
+  on public.admin_settings for insert
+  with check (true);
+
+-- Admin şifresini güncelleme politikası
+drop policy if exists "Public Update Admin Settings" on public.admin_settings;
+create policy "Public Update Admin Settings"
+  on public.admin_settings for update
+  using (true);
+

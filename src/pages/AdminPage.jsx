@@ -387,11 +387,19 @@ export default function AdminPage() {
     if (!newAdminPwdInput.trim()) return;
     setLoading(true);
     try {
-      await saveAdminPasswordToDB(newAdminPwdInput.trim());
-      setPwdChangeSuccess('Yönetici şifresi veritabanına ve sisteme kaydedildi!');
+      const res = await saveAdminPasswordToDB(newAdminPwdInput.trim());
+      if (res && res.dbSaved) {
+        setPwdChangeSuccess('Yeni yönetici şifreniz Supabase veritabanına ve sisteme başarıyla kaydedildi! Eski "emu1" şifresi artık kesinlikle GEÇERSİZDİR.');
+        notify('Yeni şifre veritabanına kaydedildi.');
+      } else if (res && res.dbError) {
+        setPwdChangeSuccess('Yeni şifre bu tarayıcıya uygulandı ve "emu1" iptal edildi. (Not: Supabase DB\'de admin_settings tablosu henüz açılmadığı için buluta yazılamadı. Kalıcı bulut kaydı için aşağıdaki SQL kodunu Supabase\'de çalıştırabilirsiniz).');
+        notify('Yeni şifre yerel olarak güncellendi.');
+      } else {
+        setPwdChangeSuccess('Yönetici şifresi güncellendi! Artık "emu1" kesinlikle geçersizdir.');
+        notify('Yeni şifre kaydedildi.');
+      }
       setNewAdminPwdInput('');
-      notify('Yeni şifre veritabanına kaydedildi.');
-      setTimeout(() => setPwdChangeSuccess(''), 4000);
+      setTimeout(() => setPwdChangeSuccess(''), 8000);
     } catch (err) {
       alert(err.message || 'Şifre kaydedilemedi.');
     } finally {
@@ -2225,7 +2233,7 @@ ${prodUrl}`;
                   <strong style={{ fontSize: 14, color: '#0f172a' }}>Admin Giriş Şifresini Değiştir & DB'ye Kaydet</strong>
                 </div>
                 <p style={{ fontSize: 12.5, color: '#64748b', marginBottom: 12 }}>
-                  Şifreniz bulut veritabanına kaydedilir, dışarıdan kimse göremez.
+                  Şifreniz güvenle kaydedilir. Yeni şifre belirlediğinizde varsayılan <code>emu1</code> şifresi tamamen iptal edilir ve sadece belirlediğiniz yeni şifreyle giriş yapılabilir.
                 </p>
 
                 <form onSubmit={handleUpdateAdminPassword} style={{ display: 'flex', gap: 8 }}>
@@ -2243,8 +2251,8 @@ ${prodUrl}`;
                 </form>
 
                 {pwdChangeSuccess && (
-                  <div style={{ color: '#16a34a', fontSize: 12.5, fontWeight: 700, marginTop: 8 }}>
-                    ✓ {pwdChangeSuccess}
+                  <div style={{ color: pwdChangeSuccess.includes('uyarısı') ? '#d97706' : '#16a34a', fontSize: 12.5, fontWeight: 600, marginTop: 10, padding: '8px 12px', background: pwdChangeSuccess.includes('uyarısı') ? '#fef3c7' : '#dcfce7', borderRadius: 6, lineHeight: 1.4 }}>
+                    {pwdChangeSuccess}
                   </div>
                 )}
               </div>

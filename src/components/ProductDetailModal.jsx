@@ -3,16 +3,15 @@ import { X, ChevronLeft, ChevronRight, Phone, MessageCircle, MapPin, CheckCircle
 import { siteConfig } from '../siteConfig';
 
 export default function ProductDetailModal({ product, onClose }) {
-  if (!product) return null;
-
-  const images = (product.images && product.images.length > 0)
+  const images = (product?.images && product?.images.length > 0)
     ? product.images
-    : (product.image ? [product.image] : []);
+    : (product?.image ? [product.image] : []);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Klavye okları ve ESC ile kontrol
   useEffect(() => {
+    if (!product) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
       if (e.key === 'ArrowLeft' && images.length > 1) {
@@ -24,7 +23,9 @@ export default function ProductDetailModal({ product, onClose }) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [images.length, onClose]);
+  }, [images.length, onClose, product]);
+
+  if (!product) return null;
 
   const handlePrev = (e) => {
     e.stopPropagation();
